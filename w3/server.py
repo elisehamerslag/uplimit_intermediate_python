@@ -42,6 +42,7 @@ async def get() -> Dict:
     """
 
     ######################################## YOUR CODE HERE ##################################################
+    return {"status": "ok"}
 
     ######################################## YOUR CODE HERE ##################################################
 
@@ -54,6 +55,10 @@ async def get() -> HTMLResponse:
     """
     ######################################## YOUR CODE HERE ##################################################
 
+    with open('index.html') as f:   # f stands for file
+        html = f.read()
+
+    return HTMLResponse(content=html)
     ######################################## YOUR CODE HERE ##################################################
 
 
@@ -65,4 +70,12 @@ async def get() -> List[ProcessStatus]:
     """
     ######################################## YOUR CODE HERE ##################################################
 
+    db = DB() # initialise the database
+
+    process_table = db.read_all() # this class returns a list of dictionaries
+
+    return [ProcessStatus(**process) for process in processes]  ## list comprehension.
+    ## in the line above, the ** means that you spread the dictionary into different layers, so that it can serve as input for ProcessStatus
+
     ######################################## YOUR CODE HERE ##################################################
+

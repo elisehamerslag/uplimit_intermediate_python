@@ -11,7 +11,7 @@ class DB:
     def __init__(self, db_name: str = "database.sqlite") -> None:
         self._db_save_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'database')
         make_dir(self._db_save_path)
-        self._connection = sqlite3.connect(os.path.join(self._db_save_path, db_name),
+        self._connection = sqlite3.connect(os.path.join(self._db_save_path, db_name),   # holds a connection to the database
                                            check_same_thread=False)
         self._table_name = 'processes'
         self._col_order = ['process_id', 'file_name', 'file_path', 'description', 'start_time', 'end_time', 'percentage']
@@ -37,6 +37,7 @@ class DB:
 
         - process_id : TEXT (not null)
         - file_name : TEXT (default is null)
+        - file_path: TEXT (default is null)
         - description : TEXT (default is null)
         - start_time : TEXT (not null)
         - end_time : TEXT (default is null)
@@ -45,6 +46,23 @@ class DB:
         Read more about datatypes in Sqlite here -> https://www.sqlite.org/datatype3.html
         """
     ######################################## YOUR CODE HERE ##################################################
+
+        sql = f"""
+        CREATE TABLE IF NOT EXISTS {self._table_name}
+        (
+            process_id TEXT not null,
+            file_name TEXT default null,
+            file_path TEXT default null,
+            description TEXT default null,
+            start_time TEXT not null, 
+            end_time TEXT default null,
+            percentage REAL default null
+        )
+        """
+
+        self._connection.execute(sql)
+        self._connection.commit()
+
 
     ######################################## YOUR CODE HERE ##################################################
 
@@ -63,6 +81,37 @@ class DB:
         :return: None
         """
     ######################################## YOUR CODE HERE ##################################################
+
+        sql = f"""
+        INSERT INTO {self._table_name}
+        (
+            process_id,
+            file_name,
+            file_path,
+            description,
+            start_time,
+            end_time,
+            percentage
+        )
+        values
+        (
+            ?,?,?,?,?,?,?
+        )
+        """
+
+        params = [
+            process_id,
+            file_name,
+            file_path,
+            description,
+            start_time,
+            end_time,
+            percentage
+        ]
+
+        self._connection.execute(sql, params)
+        self._connection.commit()
+
 
     ######################################## YOUR CODE HERE ##################################################
 
@@ -95,6 +144,15 @@ class DB:
         :return: None
         """
     ######################################## YOUR CODE HERE ##################################################
+
+        sql = f"""
+        UPDATE {self._table_name}
+        SET percentage = {percentage}
+        WHERE process_id = '{process_id}'
+        """
+
+        self._connection.execute(sql)
+        self._connection.commit()
 
     ######################################## YOUR CODE HERE ##################################################
 
